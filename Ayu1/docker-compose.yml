@@ -1,0 +1,38 @@
+###############-VERSION-###################
+version: '3.3'
+
+################-SERVICIOS-################
+networks:
+  lared:
+       driver: bridge
+
+services:
+#################-POSTGRES-##########################
+   postgres:
+    container_name: postgres
+    image: docker.io/bitnami/postgresql:11
+    restart: always
+    volumes:
+        - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+        - lared
+    ports:
+        - "5432:5432"
+    environment:
+        - POSTGRESQL_USER=postgres
+        - POSTGRESQL_DATABASE=tiendita
+        - ALLOW_EMPTY_PASSWORD=yes
+        - POSTGRESQL_PASSWORD=postgres
+
+###################-SERVIDOR-#########################   
+   servidor:
+    container_name: servidor
+    build: ./backend
+    restart: always
+    networks:
+      - lared
+    ports:
+        - "3000:3000"
+    depends_on:
+        - postgres
+
