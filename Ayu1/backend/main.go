@@ -4,17 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Joacker/Ayu1/backend/db"
-	"github.com/Joacker/Ayu1/backend/models"
 	"github.com/Joacker/Ayu1/backend/routes"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-
-	db.DBConnection()
-
-	db.DB.AutoMigrate(models.Item2{})
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", routes.HomeHandler)
