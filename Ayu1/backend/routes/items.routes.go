@@ -10,10 +10,10 @@ import (
 
 func GetItemsHandler(w http.ResponseWriter, r *http.Request) {
 	db.DBConnection()
-
-	db.DB.AutoMigrate(models.Items{})
-	db.DB.Find(&models.Items{})
-	json.NewEncoder(w).Encode(models.Items{})
+	var items []models.Items
+	db.DB.AutoMigrate(items)
+	db.DB.Find(&items)
+	json.NewEncoder(w).Encode(&items)
 
 }
 
