@@ -2,9 +2,6 @@
 version: '3.3'
 
 ################-SERVICIOS-################
-networks:
-  lared:
-       driver: bridge
 
 services:
 #################-POSTGRES-##########################
@@ -14,23 +11,21 @@ services:
     restart: always
     volumes:
         - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-        - lared
+    env_file:
+        - db.env
     ports:
         - "5432:5432"
     environment:
-        - POSTGRESQL_USER=postgres
-        - POSTGRESQL_DATABASE=tiendita
-        - ALLOW_EMPTY_PASSWORD=yes
-        - POSTGRESQL_PASSWORD=postgres
+        - POSTGRESQL_USER=${POSTGRES_USER}
+        - POSTGRESQL_DATABASE=${POSTGRES_DB}
+        - ALLOW_EMPTY_PASSWORD=${HIDE_EMPTY_PASSWORD}
+        - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD}
 
 ###################-SERVIDOR-#########################   
    servidor:
     container_name: servidor
     build: ./backend
     restart: always
-    networks:
-      - lared
     ports:
         - "3000:3000"
     depends_on:
