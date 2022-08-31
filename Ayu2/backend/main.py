@@ -2,50 +2,48 @@ import redis, time, json, psycopg2, sys, grpc
 from flask import Flask, jsonify, request
 from psycopg2.extras import RealDictCursor
 from concurrent import futures
-from routes import querys as q
+from routes.querys import Database
 import search_pb2_grpc as pb2_grpc
 import search_pb2 as pb2
 
 app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
 
-class ItemService(pb2_grpc.ItemServiceServicer):
-    
-    def __init__(self, *args, **kwargs):
-        pass
+class Inventory(pb2_grpc.ItemService):
+    def GetItem(self, request, context):
+        print("[request]", request)
+        name = request.name
+        if name:
+            list_of_elements = db.list_by_name(name)
+        else:
+            list_of_elements = db.list_of_elements()
 
-    def queryDatabase(nombre): 
-        
-        largo=len(nombre)
-
-        conn = psycopg2.connect(
-            host="database",
-            database="tiendita",
-            user='postgres',
-            password='marihuana'
-        )
-
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT * FROM items WHERE name LIKE '%"+nombre+"%'")
-        
-        row = cur.fetchall()
-
-        val = json.dumps(row)
-
-        conn.commit()
-
-        cur.close()
-        conn.close()
-
-        return row
+        list_of_elements = [{
+            "id": elem[0],
+            "name":elem[1].strip(),
+            "price": elem[2],
+            "category": elem[3].strip(),
+            "count": elem[4]
+        }
+            for elem in list_of_elements
+        ]
+        return pb2.Response(items=list_of_elements)
 
 
-    def GetInventory(self, request, context):
-        
-        return pb2.Response(items=ItemService.queryDatabase(request.name))
+def serve():
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    pb2_grpc.add_ItemServiceServicer_to_server(Inventory(), server)
+    server.add_insecure_port('[::]:50051')
+    server.start()
+    server.wait_for_termination()
 
 
-def get_his_count():
+if __name__ == '__main__':
+    db = Database()
+    print("listening...")
+    serve()
+
+''' def get_his_count():
     retries = 6
     while True:
         try:
@@ -55,12 +53,13 @@ def get_his_count():
                 raise exc
             retries -= 1
             time.sleep(0.5)
+'''
 
-@app.route('/')
+''' @app.route('/')
 def hello():
     count = get_his_count()
     return ('Hello World! I have been seen {} times.\n'.format(count))
 
 @app.route('/about')
 def about():
-    return '<h1>About</h1>'
+    return '<h1>About</h1>' '''

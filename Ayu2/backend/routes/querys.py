@@ -16,7 +16,7 @@ class Database:
             return self.conn
         else:
             self.conn = psycopg2.connect(
-                dbname=env('POSTGRES_DATABASE'),
+                dbname=env('POSTGRES_DB'),
                 user=env('POSTGRES_USER'),
                 password=env('POSTGRES_PASSWORD'),
                 host=env('POSTGRES_HOST')

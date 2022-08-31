@@ -18,12 +18,18 @@ services:
         FLASK_ENV: development
 
 ###################-CACHING-#########################  
+######################-REDIS_SV-##########################
    redis:
     container_name: cache
-    image: redis:alpine
+    image: redis:6.2.6
     restart: always
     ports:
         - "3001:6379"
+    environment:
+      - REDIS_MAXMEMORY=1mb
+      - REDIS_MAXMEMORY_POLICY=allkeys-lru
+      - ALLOW_EMPTY_PASSWORD=yes
+    command: ["redis-server", "--bind", "redis","--maxmemory 2mb","--maxmemory-policy allkeys-lru"]
 
 #################-POSTGRES-##########################
    postgres:
