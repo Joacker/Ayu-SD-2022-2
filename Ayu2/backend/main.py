@@ -2,6 +2,8 @@ import redis, time, json, psycopg2, sys, grpc
 from flask import Flask, jsonify, request
 from psycopg2.extras import RealDictCursor
 from concurrent import futures
+import search_pb2_grpc as pb2_grpc
+import search_pb2 as pb2
 
 app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
@@ -40,6 +42,7 @@ class ItemService(pb2_grpc.ItemServiceServicer):
     def GetInventory(self, request, context):
         
         return pb2.Response(items=ItemService.queryDatabase(request.name))
+
 
 def get_his_count():
     retries = 6
