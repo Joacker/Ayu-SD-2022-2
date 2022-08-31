@@ -1,4 +1,5 @@
-./Ayu1/backend/.air.toml
-./Ayu1/backend/.env
-./Ayu1/tmp
-./Ayu1/db.env
+Ayu1/backend/.air.toml
+Ayu1/backend/.env
+Ayu1/tmp
+Ayu1/db.env
+Ayu2/backend/__pycache__
