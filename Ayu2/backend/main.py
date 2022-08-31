@@ -10,6 +10,10 @@ app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
 
 class Inventory(search_pb2_grpc.ItemService):
+    
+    def __init__(self, *args, **kwargs):
+        pass
+    
     def GetItem(self, request, context):
         print("[request]", request)
         name = request.name
