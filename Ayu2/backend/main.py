@@ -2,6 +2,7 @@ import redis, time, json, psycopg2, sys, grpc
 from flask import Flask, jsonify, request
 from psycopg2.extras import RealDictCursor
 from concurrent import futures
+from routes import querys as q
 import search_pb2_grpc as pb2_grpc
 import search_pb2 as pb2
 
