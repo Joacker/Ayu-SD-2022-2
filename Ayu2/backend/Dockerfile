@@ -8,7 +8,7 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-RUN python3 -m grpc_tools.protoc -I config --python_out=. --grpc_python_out=. config/search.proto
+RUN python3 -m grpc_tools.protoc -I config --python_out=. --grpc_python_out=. config/proto_message.proto
 
 EXPOSE 3000
 

@@ -12,7 +12,7 @@ services:
     restart: always
     env_file: .env
     ports:
-        - "3000:50051"
+        - "50051:50051"
     #volumes:
     #    - ./backend:/backend
     environment:
@@ -28,7 +28,7 @@ services:
     build: ./client
     restart: always
     ports:
-        - "3002:5000"
+        - "8000:5000"
     environment:
         FLASK_ENV: development
 
@@ -53,7 +53,7 @@ services:
 #################-POSTGRES-##########################
    postgres:
     container_name: postgres
-    image: bitnami/postgresql:14.2.0-debian-10-r64
+    image: bitnami/postgresql:12.10.0
     restart: always
     volumes:
         - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql

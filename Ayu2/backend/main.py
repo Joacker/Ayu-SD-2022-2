@@ -1,49 +1,48 @@
-import redis, time, json, psycopg2, sys, grpc
-from flask import Flask, jsonify, request
-from psycopg2.extras import RealDictCursor
+import grpc
 from concurrent import futures
-from routes.querys import Database
-import search_pb2_grpc
-import search_pb2
+import proto_message_pb2 as pb2
+import proto_message_pb2_grpc as pb2_grpc
+from time import sleep
+from routes import querys
 
-app = Flask(__name__)
+class SearchService(pb2_grpc.SearchServicer):
 
-class Inventory(search_pb2_grpc.ItemService):
-    
     def __init__(self, *args, **kwargs):
         pass
-    
-    def GetItem(self, request, context):
-        print("[request]", request)
-        name = request.name
-        if name:
-            list_of_elements = db.list_by_name(name)
-        else:
-            list_of_elements = db.list_of_elements()
 
-        list_of_elements = [{
-            "id": elem[0],
-            "name":elem[1].strip(),
-            "price": elem[2],
-            "category": elem[3].strip(),
-            "count": elem[4]
-        }
-            for elem in list_of_elements
-        ]
-        return search_pb2.Response(items=list_of_elements)
-
+    def GetServerResponse(self, request, context):
+        item = []
+        response = []
+        message = request.message
+        result = f'"{message}" '
+        cursor.execute("SELECT * FROM Items;")
+        query_res = cursor.fetchall()
+        for row in query_res:
+            if message in row[1]:
+                item.append(row)
+        for i in item:
+            result = dict()
+            result['name'] = i[1]
+            result['price']= i[2]
+            result['category'] = i[3]
+            result['count']= i[4]
+            response.append(result)
+        
+        print(pb2.SearchResults(product=response))
+        return pb2.SearchResults(product=response)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    search_pb2_grpc.add_ItemServiceServicer_to_server(Inventory(), server)
+    pb2_grpc.add_SearchServicer_to_server(SearchService(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()
 
 
 if __name__ == '__main__':
-    db = Database()
-    print("listening...")
+    sleep(20)
+    conn = querys.init_db()
+    cursor = conn.cursor()
     serve()
 
 ''' def get_his_count():

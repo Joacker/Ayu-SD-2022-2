@@ -13,6 +13,6 @@ RUN python3 -m grpc_tools.protoc -I./ --python_out=. --grpc_python_out=. ./proto
 ENV FLASK_APP=main.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
-EXPOSE 3002
+EXPOSE 8000
 COPY . .
 CMD ["flask", "run"]

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request   
+from flask import Flask, request, render_template  
 
 import grpc
 import redis
@@ -11,7 +11,7 @@ import json, time
 app = Flask(__name__)
 
 r = redis.Redis(host="redis", port=6379, db=0)
-r.config_set('maxmemory', 865200*2)
+#r.config_set('maxmemory', 865200*2)
 r.config_set('maxmemory-policy', 'allkeys-lru')
 r.flushall()
 
@@ -21,7 +21,7 @@ class SearchClient(object):
     """
 
     def __init__(self):
-        self.host = 'server_grpc'
+        self.host = 'servidor'
         self.server_port = '50051'
 
         # instantiate a channel
@@ -40,9 +40,9 @@ class SearchClient(object):
         return stub
 
 
-''' @app.route('/')
+@app.route('/')
 def index(): 
-    return render_template('index.html') '''
+    return render_template('index.html')
 
 @app.route('/search', methods = ['GET'])
 def search():
@@ -54,8 +54,7 @@ def search():
         
         r.set(search, str(item))
         
-        #return render_template('index.html', datos = item, procedencia = "Datos sacados de PostgreSQL")
-        return json.loads("Datos sacados de PostgreSQL" + item)
+        return render_template('index.html', datos = item, procedencia = "Datos sacados de PostgreSQL")
     
     else:
         print(cache)
@@ -65,13 +64,13 @@ def search():
         dicc['Resultado'] = item
         print(cache)
         print(dicc)
-        #return render_template('index.html', datos = item, procedencia = "Datos sacados de Redis")
-        line = "Datos sacados de Redis" + item
-        return json.loads(line)
+        return render_template('index.html', datos = item, procedencia = "Datos sacados de Redis")
+        #line = "Datos sacados de Redis" + item
+        #print("en redis")
 
 if __name__ == '__main__':
     time.sleep(25)
-    app.run(debug=True)
+    #app.run(debug=True)
     #result = client.get_url(message="Hello Server you there?")
     #print(result.product[0].name + "*******")
     #print(f'{result}')
