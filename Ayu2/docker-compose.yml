@@ -22,6 +22,22 @@ services:
         - postgres
         - redis
 
+###################-CLIENTE-#########################   
+   cliente:
+    container_name: cliente
+    build: ./client
+    restart: always
+    env_file: .env
+    ports:
+        - "3002:5000"
+    environment:
+        FLASK_ENV: development
+
+    depends_on:
+        - postgres
+        - redis
+        - servidor
+
 ###################-REDIS_SV-##########################
    redis:
     container_name: cache
