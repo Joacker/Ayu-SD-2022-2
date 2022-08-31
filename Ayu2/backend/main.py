@@ -19,3 +19,7 @@ def get_his_count():
 def hello():
     count = get_his_count()
     return ('Hello World! I have been seen {} times.\n'.format(count))
+
+@app.route('/about')
+def about():
+    return '<h1>About</h1>'

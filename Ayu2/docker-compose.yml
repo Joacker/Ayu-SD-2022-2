@@ -12,6 +12,10 @@ services:
     restart: always
     ports:
         - "3000:5000"
+    volumes:
+        - ./backend:/backend
+    environment:
+        FLASK_ENV: development
 
 ###################-CACHING-#########################  
    redis:
