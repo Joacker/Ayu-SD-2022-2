@@ -17,8 +17,7 @@ services:
     environment:
         FLASK_ENV: development
 
-###################-CACHING-#########################  
-######################-REDIS_SV-##########################
+###################-REDIS_SV-##########################
    redis:
     container_name: cache
     image: redis:6.2.6
