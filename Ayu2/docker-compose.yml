@@ -27,7 +27,6 @@ services:
     container_name: cliente
     build: ./client
     restart: always
-    env_file: .env
     ports:
         - "3002:5000"
     environment:
