@@ -1,0 +1,25 @@
+###############-VERSION-###################
+version: '3.3'
+
+################-SERVICIOS-################
+
+services:
+
+###################-SERVIDOR-#########################   
+   servidor:
+    container_name: servidor
+    build: ./backend
+    restart: always
+    ports:
+        - "3000:5000"
+
+###################-CACHING-#########################  
+   redis:
+    container_name: cache
+    image: redis:alpine
+    restart: always
+    ports:
+        - "3001:6379"
+     
+    
+
