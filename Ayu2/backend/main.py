@@ -2,14 +2,14 @@ import redis, time, json, psycopg2, sys, grpc
 from flask import Flask, jsonify, request
 from psycopg2.extras import RealDictCursor
 from concurrent import futures
-from routes.querys import Database
-import search_pb2_grpc as pb2_grpc
-import search_pb2 as pb2
+from querys import Database
+import search_pb2_grpc
+import search_pb2
 
 app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
 
-class Inventory(pb2_grpc.ItemService):
+class Inventory(search_pb2_grpc.ItemService):
     def GetItem(self, request, context):
         print("[request]", request)
         name = request.name
@@ -27,12 +27,12 @@ class Inventory(pb2_grpc.ItemService):
         }
             for elem in list_of_elements
         ]
-        return pb2.Response(items=list_of_elements)
+        return search_pb2.Response(items=list_of_elements)
 
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    pb2_grpc.add_ItemServiceServicer_to_server(Inventory(), server)
+    search_pb2_grpc.add_ItemServiceServicer_to_server(Inventory(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()

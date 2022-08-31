@@ -3,3 +3,4 @@ Ayu1/backend/.env
 Ayu1/tmp
 Ayu1/db.env
 Ayu2/backend/__pycache__
+Ayu2/backend/routes/__pycache__

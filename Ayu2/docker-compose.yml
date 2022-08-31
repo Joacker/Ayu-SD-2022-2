@@ -10,12 +10,17 @@ services:
     container_name: servidor
     build: ./backend
     restart: always
+    env_file: .env
     ports:
-        - "3000:5000"
-    volumes:
-        - ./backend:/backend
+        - "3000:50051"
+    #volumes:
+    #    - ./backend:/backend
     environment:
         FLASK_ENV: development
+
+    depends_on:
+        - postgres
+        - redis
 
 ###################-REDIS_SV-##########################
    redis:
@@ -33,12 +38,12 @@ services:
 #################-POSTGRES-##########################
    postgres:
     container_name: postgres
-    image: docker.io/bitnami/postgresql:11
+    image: bitnami/postgresql:14.2.0-debian-10-r64
     restart: always
     volumes:
-        - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
-        - db.env
+        - .env
     ports:
         - "5432:5432"
     environment:
