@@ -24,6 +24,23 @@ services:
     restart: always
     ports:
         - "3001:6379"
-     
+
+#################-POSTGRES-##########################
+   postgres:
+    container_name: postgres
+    image: docker.io/bitnami/postgresql:11
+    restart: always
+    volumes:
+        - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    env_file:
+        - db.env
+    ports:
+        - "5432:5432"
+    environment:
+        - POSTGRESQL_USER=${POSTGRES_USER}
+        - POSTGRESQL_DATABASE=${POSTGRES_DB}
+        - ALLOW_EMPTY_PASSWORD=${HIDE_EMPTY_PASSWORD}
+        - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD}
+
     
 

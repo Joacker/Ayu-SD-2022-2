@@ -1,42 +1,38 @@
-import redis, time, json, psycopg2, sys, grpc
-from flask import Flask, jsonify, request
-from psycopg2.extras import RealDictCursor
-from concurrent import futures
-from backend import search_pb2_grpc as pb2_grpc
-from backend import search_pb2 as pb2
+import string
+import psycopg2
+from psycopg2._psycopg import connection
+from environs import Env
 
 
-class ItemService(pb2_grpc.ItemServiceServicer):
-    
-    def __init__(self, *args, **kwargs):
+class Database:
+    def __init__(self) -> None:
+        self.conn = False
         pass
 
-    def queryDatabase(nombre): 
-        
-        largo=len(nombre)
+    def connectionDB(self) -> connection:
+        env = Env()
+        env.read_env()
+        if self.conn:
+            return self.conn
+        else:
+            self.conn = psycopg2.connect(
+                dbname=env('POSTGRES_DATABASE'),
+                user=env('POSTGRES_USER'),
+                password=env('POSTGRES_PASSWORD'),
+                host=env('POSTGRES_HOST')
+            )
+            return self.conn
 
-        conn = psycopg2.connect(
-            host="database",
-            database="tiendita",
-            user='postgres',
-            password='marihuana'
-        )
+    def list_of_elements(self) -> list[tuple[str]]:
+        cursor: psycopg2.cursor = self.connectionDB().cursor()
+        cursor.execute("""SELECT * FROM items;""")
+        fet = cursor.fetchall()
+        return fet
 
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT * FROM items WHERE name LIKE '%"+nombre+"%'")
-        
-        row = cur.fetchall()
+    def list_by_name(self, name_product: str) -> list[tuple[str]]:
 
-        val = json.dumps(row)
-
-        conn.commit()
-
-        cur.close()
-        conn.close()
-
-        return row
-
-
-    def GetInventory(self, request, context):
-        
-        return pb2.Response(items=ItemService.queryDatabase(request.name))
+        cursor = self.connectionDB().cursor()
+        cursor.execute(
+            f"""SELECT * FROM items WHERE name ILIKE '%{name_product}%' ;""")
+        fet = cursor.fetchall()
+        return fet
