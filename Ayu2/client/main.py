@@ -3,9 +3,9 @@ from flask import Flask, render_template, request
 import grpc
 import redis
 import logging
+
 import proto_message_pb2 as pb2_grpc
 import proto_message_pb2_grpc as pb2
-import time
 import json
 
 app = Flask(__name__)
@@ -40,9 +40,9 @@ class SearchClient(object):
         return stub
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+''' @app.route('/')
+def index(): 
+    return render_template('index.html') '''
 
 @app.route('/search', methods = ['GET'])
 def search():

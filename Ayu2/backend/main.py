@@ -7,7 +7,6 @@ import search_pb2_grpc
 import search_pb2
 
 app = Flask(__name__)
-cache = redis.Redis(host='redis', port=6379)
 
 class Inventory(search_pb2_grpc.ItemService):
     
