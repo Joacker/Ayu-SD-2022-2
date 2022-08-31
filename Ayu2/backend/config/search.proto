@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+message Item{
+    int32 id = 1;
+    string name = 2;
+    float price = 3;
+    string category = 4;
+    int32 count = 5;
+}
+message Response {
+    repeated Item items = 1;
+}
+
+message GetInventoryRequest {
+    string name = 1;
+}
+
+service ItemService {
+    rpc GetInventory(GetInventoryRequest) returns (Response) {}
+}
