@@ -5,7 +5,7 @@ app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
 
 def get_his_count():
-    retries = 5
+    retries = 6
     while True:
         try:
             return cache.incr('hits')
