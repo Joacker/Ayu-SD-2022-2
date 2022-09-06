@@ -4,7 +4,7 @@ const connectionData = {
     user:'postgres',
     host:'postgres',
     database:'tiendita',
-    password:'marihuana',
+    password:'postgres',
     port:5432
 }
 

@@ -35,7 +35,7 @@ services:
       - POSTGRESQL_USERNAME=postgres
       - POSTGRESQL_DATABASE=tiendita
       - ALLOW_EMPTY_PASSWORD=yes
-      - POSTGRESQL_PASSWORD=marihuana
+      - POSTGRESQL_PASSWORD=postgres
     ports:
       - "5432:5432"
 
