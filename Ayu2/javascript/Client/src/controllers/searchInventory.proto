@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+// package search;
+
+service InventorySearch{
+    rpc GetServerResponse(Message) returns (Products){}
+}
+
+message Message{
+    string message = 1;
+}
+
+message Products{
+    repeated Product product = 1;
+}
+
+message Product{
+
+    int32 id = 1;
+    string name = 2;
+    float price = 3;
+    string category = 4;
+    int32 count = 5;
+}

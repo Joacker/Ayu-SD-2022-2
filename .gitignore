@@ -2,5 +2,7 @@ Ayu1/backend/.air.toml
 Ayu1/backend/.env
 Ayu1/tmp
 Ayu1/db.env
-Ayu2/backend/__pycache__
-Ayu2/backend/routes/__pycache__
+Ayu2/python/backend/__pycache__
+Ayu2/python/backend/routes/__pycache__
+Ayu2/javascript/Nodejs/node_modules
+Ayu2/javascript/ServerJS/node_modules
