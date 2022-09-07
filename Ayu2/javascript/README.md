@@ -1,5 +1,6 @@
 # Node
 
+Para levantar las instancias dentro de la topología
 ```sh
 docker-compose up --build
 ```
