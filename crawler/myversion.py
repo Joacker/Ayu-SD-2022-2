@@ -1,10 +1,10 @@
 from time import time
 from unicodedata import name
-import requests, csv
+import requests
 from bs4 import BeautifulSoup
 
-# ------------------- READ_CSV ------------------- #
-def read_csv(path, max_lines):
+# ------------------- READ_TXT ------------------- #
+def read_csv(path, max_lines=None):
        
     with open(path, 'r') as f:
         cont = 0
@@ -33,7 +33,7 @@ def read_csv(path, max_lines):
 
 # ------------------- SCRAPING ------------------- #
 def getDataFromUrl(url):
-    collected_data = {'url': url, 'title': None, 'description': None, 'keywords': []}
+    collected_data = {'url': url, 'title': None, 'description': None, 'keywords': None}
     try:
         r = requests.get(url, timeout=1)
     except Exception:
@@ -45,32 +45,46 @@ def getDataFromUrl(url):
         source = requests.get(url).text
         soup = BeautifulSoup(source, features='html.parser')
 
+        # Se otienes las etiquetas meta
+        meta = soup.find("meta")
+            
         # Obtenemos el título
         title = soup.find("meta", {'name': 'title'})
-        title = title['content'] if title else None
+        #title = title['content'] if title else None
         
         # Obtenemos la descripción
         description = soup.find("meta", {'name': "description"})
-        description = description['content'] if description else None
+        #description = description['content'] if description else None
         
         # Obtenemos la keywords y las limpiamos
         keywords = soup.find("meta", {'name': "keywords"})
-        keywords = keywords['content'] if keywords else None
-        if keywords is None:
-            return None
-        keywords = keywords.replace(" ", "") if keywords else None
-        keywords = keywords.replace(".", "") if keywords else None
-        keywords = keywords.split(",") if keywords else None
+        #keywords = keywords['content'] if keywords else None
+        
 
         try:
-            collected_data['title'] = title
-            collected_data['description'] = description
-            collected_data['keywords'] = keywords          
+            if keywords is None:
+                return None
+            else:
+                
+                title = title['content'] if title else None
+                description = description['content'] if description else None
+                keywords = keywords['content'] if keywords else None
+                
+                keywords = keywords.replace(" ", "") if keywords else None
+                keywords = keywords.replace(".", "") if keywords else None
+                keywords = keywords.split(",") if keywords else None  
+                    
                 
         except Exception:
-            pass
-
-    return collected_data
+            return None
+        collected_data['title'] = title
+        collected_data['description'] = description
+        collected_data['keywords'] = keywords 
+        if collected_data['keywords'] is None:
+                return None
+        return collected_data
+          
+    return None
 
 
 # ------------------- MAIN ------------------- #
