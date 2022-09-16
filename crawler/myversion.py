@@ -76,7 +76,10 @@ def getDataFromUrl(url):
                 
         except Exception:
             return None
-        collected_data['title'] = title.get_text()
+        title = title.get_text().replace("\n","") if title else None
+        title = title.replace("\r","") if title else None
+        title = title.replace("\t","") if title else None
+        collected_data['title'] = title
         collected_data['description'] = description
         collected_data['keywords'] = keywords 
         if collected_data['keywords'] is None:
