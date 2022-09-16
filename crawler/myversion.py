@@ -72,7 +72,7 @@ def getDataFromUrl(url):
                 
                 keywords = keywords.replace(" ", "") if keywords else None
                 keywords = keywords.replace(".", "") if keywords else None
-                keywords = keywords.split(",") if keywords else None  
+                #keywords = keywords.split(",") if keywords else None  
                     
                 
         except Exception:
