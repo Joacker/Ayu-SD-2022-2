@@ -49,7 +49,7 @@ def getDataFromUrl(url):
         meta = soup.find("meta")
             
         # Obtenemos el título
-        title = soup.find("meta", {'name': 'title'})
+        title = soup.find('title')
         #title = title['content'] if title else None
         
         # Obtenemos la descripción
@@ -65,8 +65,7 @@ def getDataFromUrl(url):
             if keywords is None:
                 return None
             else:
-                
-                title = title['content'] if title else None
+        
                 description = description['content'] if description else None
                 keywords = keywords['content'] if keywords else None
                 
@@ -77,7 +76,7 @@ def getDataFromUrl(url):
                 
         except Exception:
             return None
-        collected_data['title'] = title
+        collected_data['title'] = title.get_text()
         collected_data['description'] = description
         collected_data['keywords'] = keywords 
         if collected_data['keywords'] is None:
