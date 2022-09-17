@@ -10,10 +10,22 @@ import json, time
 
 app = Flask(__name__)
 
-r = redis.Redis(host="redis", port=6379, db=0)
-#r.config_set('maxmemory', 865200*2)
+r = redis.Redis(host="redis1", port=6379, db=0)
+r.config_set('maxmemory', 865200*2)
 r.config_set('maxmemory-policy', 'allkeys-lru')
+
+
+r = redis.Redis(host="redis2", port=6379, db=0)
+r.config_set('maxmemory', 865200*2)
+r.config_set('maxmemory-policy', 'allkeys-lfu')
+
+
+r = redis.Redis(host="redis3", port=6379, db=0)
+r.config_set('maxmemory', 865200*2)
+r.config_set('maxmemory-policy', 'allkeys-random')
+
 r.flushall()
+
 
 class SearchClient(object):
     """
