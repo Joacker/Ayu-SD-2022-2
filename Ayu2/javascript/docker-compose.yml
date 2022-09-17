@@ -54,7 +54,7 @@ services:
         "--bind",
         "redis1",
         "--maxmemory 2mb",
-        "--maxmemory-policy allkeys-lfu"
+        "--maxmemory-policy allkeys-lru"
       ]
 
   redis2:
