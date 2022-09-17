@@ -1,15 +1,23 @@
+###############-VERSION-###################
 version: '3.7'
+
+################-SERVICIOS-################
+
 services:
 
+###################-CLIENTE-#########################   
   client:
     container_name: cliente-http
     build: ./Client
     depends_on:
       - grpc_server
-      - redis
+      - redis1
+      - redis2
+      - redis3
     ports:
       - "3000:3000"
 
+###################-SERVIDOR-#########################  
   grpc_server:
     container_name: servidor-grpc
     build: ./ServerJS
@@ -18,6 +26,7 @@ services:
     ports:
       - "8030:8030"
 
+#################-POSTGRES-##########################
   postgres:
     image: docker.io/bitnami/postgresql:11
     volumes:
@@ -30,19 +39,55 @@ services:
     ports:
       - "5432:5432"
 
-  redis:
-    container_name: cache
+###################-REDIS_SHARPS-##########################
+  redis1:
+    container_name: redis1
     image: redis:6.2.6
     restart: always
     ports:
-      - "8031:6379"
+      - "6379:6379"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     command:
       [
         "redis-server",
         "--bind",
-        "redis",
+        "redis1",
         "--maxmemory 2mb",
-        "--maxmemory-policy allkeys-lru"
+        "--maxmemory-policy allkeys-lfu"
       ]
+
+  redis2:
+    container_name: redis2
+    image: redis:6.2.6
+    restart: always
+    ports:
+      - "6380:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    command:
+      [
+        "redis-server",
+        "--bind",
+        "redis2",
+        "--maxmemory 2mb",
+        "--maxmemory-policy allkeys-lfu"
+      ]
+  
+  redis3:
+    container_name: redis3
+    image: redis:6.2.6
+    restart: always
+    ports:
+      - "6381:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    command:
+      [
+        "redis-server",
+        "--bind",
+        "redis3",
+        "--maxmemory 2mb",
+        "--maxmemory-policy allkeys-random"
+      ]
+    
