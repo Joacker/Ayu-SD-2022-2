@@ -20,7 +20,6 @@ services:
 
     depends_on:
         - postgres
-        - redis
 
 ###################-CLIENTE-#########################   
    cliente:
@@ -34,21 +33,63 @@ services:
 
     depends_on:
         - postgres
-        - redis
+        - redis1
+        - redis2
+        - redis3
         - servidor
 
-###################-REDIS_SV-##########################
-   redis:
-    container_name: cache
+###################-REDIS_SHARPS-##########################
+   redis1:
+    container_name: redis1
     image: redis:6.2.6
     restart: always
     ports:
-        - "3001:6379"
+      - "6379:6379"
     environment:
-      - REDIS_MAXMEMORY=1mb
-      - REDIS_MAXMEMORY_POLICY=allkeys-lru
       - ALLOW_EMPTY_PASSWORD=yes
-    command: ["redis-server", "--bind", "redis","--maxmemory 2mb","--maxmemory-policy allkeys-lru"]
+    command:
+      [
+        "redis-server",
+        "--bind",
+        "redis1",
+        "--maxmemory 2mb",
+        "--maxmemory-policy allkeys-lfu"
+      ]
+
+   redis2:
+    container_name: redis2
+    image: redis:6.2.6
+    restart: always
+    ports:
+      - "6380:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    command:
+      [
+        "redis-server",
+        "--bind",
+        "redis2",
+        "--maxmemory 2mb",
+        "--maxmemory-policy allkeys-lfu"
+      ]
+  
+   redis3:
+    container_name: redis3
+    image: redis:6.2.6
+    restart: always
+    ports:
+      - "6381:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    command:
+      [
+        "redis-server",
+        "--bind",
+        "redis3",
+        "--maxmemory 2mb",
+        "--maxmemory-policy allkeys-random"
+      ]
+    
 
 #################-POSTGRES-##########################
    postgres:
