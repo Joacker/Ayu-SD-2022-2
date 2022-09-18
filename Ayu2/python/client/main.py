@@ -11,21 +11,18 @@ import json, time
 app = Flask(__name__)
 
 r = redis.Redis(host="redis1", port=6379, db=0)
-r.config_set('maxmemory', 865200*2)
+#r.config_set('maxmemory', 865200*2)
 r.config_set('maxmemory-policy', 'allkeys-lru')
-
+r.flushall()
 
 r1 = redis.Redis(host="redis2", port=6379, db=0)
-r1.config_set('maxmemory', 865200*2)
+#r1.config_set('maxmemory', 865200*2)
 r1.config_set('maxmemory-policy', 'allkeys-lfu')
-
+r1.flushall()
 
 r2 = redis.Redis(host="redis3", port=6379, db=0)
-r2.config_set('maxmemory', 865200*2)
+#r2.config_set('maxmemory', 865200*2)
 r2.config_set('maxmemory-policy', 'allkeys-random')
-
-r.flushall()
-r1.flushall()
 r2.flushall()
 
 
@@ -63,8 +60,8 @@ def search():
     client = SearchClient()
     search = request.args['search']
     cache = r.get(search)
-    cache1 = r1.get(search)
-    cache2 = r1.get(search)
+    #cache1 = r1.get(search)
+    #cache2 = r1.get(search)
     if cache == None:
         item = client.get_url(message=search)
         
