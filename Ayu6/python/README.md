@@ -35,10 +35,6 @@ curl --location --request POST http://localhost:3000/login \
     "pass":"password"
 }'
 ```
-#### 
-- ☄ MÉTODO: POST
-- ❔   CONTENT-TYPE: application/json
-- 📄  DATA-RAW: user y password en formato json
 
 Response
 ```js
