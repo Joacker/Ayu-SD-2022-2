@@ -1,0 +1,54 @@
+###################-VERSION-###################
+version: '3.3'
+
+###################-SERVICES-###################
+services:
+
+  cliente:
+    container_name: cliente-node
+    build: ../Client/
+    networks:
+      - lared
+    ports:
+      - 3000:3000
+    volumes:
+      - ../Client:/app
+    environment:
+      - kafka=kafka
+
+  server:
+    container_name: server-node
+    build: ../Server/
+    networks:
+      - lared
+    ports:
+      - 3001:3001
+    volumes:
+      - ../Server:/app
+    environment:
+      - kafka=kafka
+
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - lared
+    ports:
+      - 2181:2181
+
+  kafka:
+    container_name: kafka-server
+    image: 'bitnami/kafka:latest'
+    networks:
+      - lared
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_ADVERTISED_PORT=9092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+    ports:
+      - 9092:9092
+      - 9093:9093

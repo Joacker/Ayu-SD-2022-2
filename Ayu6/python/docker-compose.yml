@@ -4,7 +4,7 @@ version: '3.3'
 ###################-SERVICES-###################
 services:
 
-###################-NGINX-###################
+###################-POSTGRES-###################
   data_base:
         image: postgres:10.5
         container_name: postgres
@@ -65,7 +65,7 @@ services:
         container_name: api-login
         restart: always
         build:
-            context: ./api/
+            context: ./producer/
             dockerfile: Dockerfile
         environment:
             - POSTGRES_USER=myuser
@@ -78,7 +78,7 @@ services:
         ports:
             - "3000:80"
         volumes:
-            - ./api:/usr/src/app
+            - ./producer:/usr/src/app
             - ./storage:/tmp/storage
         depends_on:
             - "data_base"
@@ -89,7 +89,7 @@ services:
         container_name: api-blocked
         restart: always
         build:
-            context: ./api-blocked/
+            context: ./consumer/
             dockerfile: Dockerfile
         environment:
             - POSTGRES_USER=myuser
@@ -103,7 +103,7 @@ services:
             - "5000:5000"
             - "5004:5004"
         volumes:
-            - ./api-blocked:/usr/src/app
+            - ./consumer:/usr/src/app
             - ./storage:/tmp/storage
         depends_on:
             - "data_base"
