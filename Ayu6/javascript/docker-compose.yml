@@ -4,51 +4,76 @@ version: '3.3'
 ###################-SERVICES-###################
 services:
 
-  cliente:
-    container_name: cliente-node
-    build: ../Client/
-    networks:
-      - lared
-    ports:
-      - 3000:3000
+###################-PRODUCER-###################
+  login:
+    build: ./Login
+    depends_on:
+      - security
     volumes:
-      - ../Client:/app
-    environment:
-      - kafka=kafka
-
-  server:
-    container_name: server-node
-    build: ../Server/
+      - './Edit/Login/index.js:/usr/src/app/index.js'
     networks:
-      - lared
+      - app-tier
     ports:
-      - 3001:3001
-    volumes:
-      - ../Server:/app
-    environment:
-      - kafka=kafka
+      - "8080:8080"
 
+###################-CONSUMER-###################
+  security:
+    build: ./Security
+    networks:
+      - app-tier
+    volumes:
+      - './Edit/Security/index.js:/usr/src/app/index.js'
+      - './Edit/Security/data.json:/usr/src/app/data.json'
+      - './Edit/Security/nodemon.json:/usr/src/app/nodemon.json'
+    ports:
+      - "8070:8070"
+
+###################-ZOOKEEPER-###################
   zookeeper:
     image: 'bitnami/zookeeper:latest'
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ALLOW_ANONYMOUS_LOGIN: "yes"
     networks:
-      - lared
+      - app-tier
     ports:
       - 2181:2181
+      - 2888:2888
+      - 3888:3888
 
+###################-KAFKA-###################
   kafka:
-    container_name: kafka-server
     image: 'bitnami/kafka:latest'
     networks:
-      - lared
+      - app-tier
     depends_on:
       - zookeeper
     environment:
-      - KAFKA_ADVERTISED_HOST_NAME=kafka
-      - KAFKA_ADVERTISED_PORT=9092
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"   
+      KAFKA_ADVERTISED_PORT: "9092"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper:2181"
     ports:
       - 9092:9092
-      - 9093:9093
+      
+###################-REDIS-###################
+  redis_sv:
+      image: redis:6.2.6
+      command: ["redis-server", "--bind", "redis_sv","--maxmemory 2mb","--maxmemory-policy allkeys-lru"]
+      networks:
+        - app-tier
+      environment:
+        - ALLOW_EMPTY_PASSWORD=yes
+      ports:
+        - "6379:6379"
+
+###################-KAFDROP-###################
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    ports:
+     - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - kafka
