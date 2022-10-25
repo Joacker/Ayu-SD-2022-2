@@ -1,55 +1,111 @@
-version: "3.9"
+###################-VERSION-###################
+version: '3.3'
 
-networks:
-  my_network:
-
+###################-SERVICES-###################
 services:
+
+###################-NGINX-###################
+  data_base:
+        image: postgres:10.5
+        container_name: postgres
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=myuser
+            - POSTGRES_PASSWORD=mypassword
+
+###################-ZOOKEEPER-###################
   zookeeper:
-    image: 'bitnami/zookeeper:latest'
+    image: 'bitnami/zookeeper:3.7.0'
     container_name: zookeeper
-    networks:
-      - my_network
     ports:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - ./bitnami/zookeeper:/bitnami/zookeeper
 
+###################-KAFKA-###################  
   kafka:
-    image: 'bitnami/kafka:latest'
+    image: 'bitnami/kafka:2.8.0'
     container_name: kafka
-    networks:
-      - my_network
     ports:
-      - '9092:9092'
+      - "9093:9093"
+    expose:
+      - "9093"
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CREATE_TOPICS="kafka_capstone_event_bus:1:1"
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
       - ALLOW_PLAINTEXT_LISTENER=yes
-
     depends_on:
       - zookeeper
+    volumes:
+      - ./bitnami/kafka:/bitnami/kafka
 
-  producer:
-    container_name: producer
-    networks:
-      - my_network
-    build: ./Producer
+###################-KAFDROP-###################
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
     ports:
-      - "8000:8000"
+     - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
     depends_on:
       - kafka
-      - zookeeper
-  
-  consumer:
-    container_name: consumer
-    networks:
-      - my_network
-    build: ./Consumer
-    ports:
-      - "5000:5000"
-    depends_on:
-      - kafka
-      - zookeeper
-      - producer
+
+###################-FLASK-API-###################
+  flask-api:
+        container_name: api-login
+        restart: always
+        build:
+            context: ./api/
+            dockerfile: Dockerfile
+        environment:
+            - POSTGRES_USER=myuser
+            - POSTGRES_PASSWORD=mypassword
+            - POSTGRES_DB=postgres
+            - POSTGRES_HOST=postgres
+            - POSTGRES_PORT=5432
+            - FLASK_ENV=development
+            - KAFKA_ADVERTISED_HOST_NAME=kafka
+        ports:
+            - "3000:80"
+        volumes:
+            - ./api:/usr/src/app
+            - ./storage:/tmp/storage
+        depends_on:
+            - "data_base"
+            - "kafka"
+
+###################-API-BLOCKED-###################
+  flask-api-blocked:
+        container_name: api-blocked
+        restart: always
+        build:
+            context: ./api-blocked/
+            dockerfile: Dockerfile
+        environment:
+            - POSTGRES_USER=myuser
+            - POSTGRES_PASSWORD=mypassword
+            - POSTGRES_DB=postgres
+            - POSTGRES_HOST=postgres
+            - POSTGRES_PORT=5432
+            - FLASK_ENV=development
+            - KAFKA_ADVERTISED_HOST_NAME=kafka
+        ports:
+            - "5000:5000"
+            - "5004:5004"
+        volumes:
+            - ./api-blocked:/usr/src/app
+            - ./storage:/tmp/storage
+        depends_on:
+            - "data_base"
+            - "kafka"
+        command: python app.py

@@ -1,0 +1,9 @@
+Flask==2.0.1
+flask-cors==3.0.6
+Flask-SQLAlchemy==2.5.1
+psycopg2
+bcrypt==3.2.2
+flask-login
+pycryptodome==3.10.1
+aiokafka
+requests
