@@ -5,10 +5,6 @@ Para levantar las instancias dentro de la topología
 docker-compose up --build
 ```
 
-GET
-```sh
-http://localhost:8000/search?search=
-```
 
 Para bajar las instancias del compose
 ```sh
