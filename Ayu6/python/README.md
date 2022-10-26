@@ -5,10 +5,6 @@ Para levantar las instancias dentro de la topología
 docker-compose up --build
 ```
 
-GET
-```sh
-http://localhost:8000/search?search=
-```
 
 Para bajar las instancias del compose
 ```sh
@@ -35,10 +31,6 @@ curl --location --request POST http://localhost:3000/login \
     "pass":"password"
 }'
 ```
-#### 
-- ☄ MÉTODO: POST
-- ❔   CONTENT-TYPE: application/json
-- 📄  DATA-RAW: user y password en formato json
 
 Response
 ```js
