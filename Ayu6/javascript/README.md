@@ -1,26 +1,3 @@
-# SD-Homeworks2
-## Integrantes: Ze Hui Fu y Joaquín Fernández.
-**Instrucciones y uso**
-```bash
-https://github.com/Joacker/SD-Homeworks2.git
-```
-
-
-----
-**Preguntas**
-----
-- ¿Por qué Kafka funciona bien en este escenario?
-
-Es util en el escenario de un login, debido a que Kafka esta diseñado para enviar mensajes en tiempo real, por lo tanto permite bloquear usuarios inmediatamente luego de que se cumplan ciertas condiciones de manera inmediata.
-
-- Basado en las tecnologías que usted tiene a su disposición  (Kafka, backend) ¿Qué haría usted para manejar una gran cantidad de usuarios al mismo tiempo?
-
-Para manejar una gran cantidad de usuarios y/o peticiones, se deberá aumentar la cantidad de consumidores para los brokers, además se pueden agregar más brokers para que así los datos se dividan en particiones, se repliquen y distribuyan dentro del clúster.
-
----
-
-
-
 **Finalmente para ejecutar el SW se recomienda usar el siguiente comando**
 
  ```bash
