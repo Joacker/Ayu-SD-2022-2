@@ -38,7 +38,4 @@ http://localhost:8000/
 
 Luego de esto se puede efectuar el inicio de sesión con la ruta post ya mencionada anteriormente (1). 
 
-
-Cabe hacer mención que unos cuantos scripts del trabajo son extraidos de ejemplos practicos vistos en ayudantía y documentación. Gracias por su atención.
-
 ![github small](https://elestanteliterario.com/wp-content/uploads/2018/12/franz-kafka.jpg)
