@@ -1,0 +1,12 @@
+{
+  "users": [
+    { "username": "guillermo", "password": "123", "tiempo": "" },
+    { "username": "pablo", "password": "123", "tiempo": "" },
+    { "username": "juan", "password": "123", "tiempo": "" },
+    { "username": "pedro", "password": "123", "tiempo": "" },
+    { "username": "maria", "password": "123", "tiempo": "" },
+    { "username": "jose", "password": "123", "tiempo": "" },
+    { "username": "javier", "password": "123", "tiempo": "" },
+    { "username": "jorge", "password": "123", "tiempo": "" }
+  ]
+}

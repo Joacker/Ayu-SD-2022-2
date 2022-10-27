@@ -1,0 +1,56 @@
+version: '3.1'
+
+networks:
+  lared:
+    driver: bridge
+
+services:
+  node-api:
+    container_name: api-login
+    build: ./server/api
+    depends_on:
+       - node-api-blocked
+    # volumes:
+    #    - './server/api:/usr/src/app'
+    networks:
+       - lared
+    ports:
+      - "3000:3000"
+        
+  node-api-blocked:
+    container_name: api-blocked
+    build: ./server/error
+    networks:
+      - lared
+    # volumes:
+    #   - ./server/error:/usr/src/app
+
+    ports:
+      - "8000:8000"
+
+  zookeeper:
+    container_name: elzookeeper
+    image: 'bitnami/zookeeper:latest'
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+    networks:
+      - lared
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    
+  kafka:
+    container_name: elkafka
+    image: 'bitnami/kafka:latest'
+    networks:
+     - lared
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"   
+      KAFKA_ADVERTISED_PORT: "9092"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper:2181"
+    ports:
+      - 9092:9092
